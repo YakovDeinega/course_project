@@ -4,7 +4,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from profile_manager.models import UserInformation
+from profile_manager.models import UserInformation, InterestingFact, Education
+from django.forms import inlineformset_factory, formset_factory
 
 
 def validate_russian(value: str):
@@ -33,8 +34,53 @@ class RegisterForm(forms.Form):
         return cleaned_data
 
 
-class UserInformationForm(forms.ModelForm):
-
+class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = UserInformation
-        exclude = ('user',)
+        fields = ['image', 'description', 'town', 'address', 'dt_birthday', 'status']
+        widgets = {
+            'dt_birthday': forms.DateInput(attrs={'type': 'date'}),
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
+
+class InterestingFactForm(forms.ModelForm):
+    class Meta:
+        model = InterestingFact
+        fields = ['text']
+        widgets = {
+            'text': forms.TextInput(attrs={
+                'placeholder': 'Введите интересный факт',
+                'class': 'form-control'
+            })
+        }
+
+class EducationForm(forms.ModelForm):
+    class Meta:
+        model = Education
+        fields = ['university', 'is_confirmed']
+        widgets = {
+            'university': forms.TextInput(attrs={
+                'placeholder': 'Название учебного заведения',
+                'class': 'form-control'
+            }),
+            'is_confirmed': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            })
+        }
+
+# Используем formset_factory вместо inlineformset_factory для более гибкого управления
+InterestingFactFormSet = inlineformset_factory(
+    UserInformation,
+    InterestingFact,
+    fields=('text',),
+    extra=1,
+    can_delete=True
+)
+
+EducationFormSet = inlineformset_factory(
+    UserInformation,
+    Education,
+    fields=('university', 'is_confirmed'),
+    extra=1,
+    can_delete=True
+)

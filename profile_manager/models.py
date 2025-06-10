@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -10,17 +12,6 @@ class Town(models.Model):
     class Meta:
         verbose_name = 'Город'
         verbose_name_plural = 'Города'
-
-
-class University(models.Model):
-    name = models.CharField(max_length=150, verbose_name='Название учебного заведения')
-    town = models.ForeignKey('profile_manager.Town', on_delete=models.PROTECT, verbose_name='Город')
-    address = models.CharField(max_length=150, blank=True, verbose_name='Адрес')
-
-    class Meta:
-        verbose_name = 'Учебное заведение'
-        verbose_name_plural = 'Учебные заведения'
-        unique_together = ('name', 'town',)
 
 
 class UserInformation(models.Model):
@@ -46,6 +37,13 @@ class UserInformation(models.Model):
         verbose_name = 'Информация о пользователе'
         verbose_name_plural = 'Информации о пользователях'
 
+    @property
+    def age(self):
+        if not self.dt_birthday:
+            return None
+        today = datetime.datetime.now().date()
+        return (today - self.dt_birthday).years
+
 
 class Education(models.Model):
     user = models.ForeignKey(
@@ -53,6 +51,7 @@ class Education(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Информация о пользователе',
     )
+    university = models.CharField(max_length=150, verbose_name='Учебное заведение', default='')
     is_confirmed = models.BooleanField(default=False, verbose_name='Подтверждено')
 
     class Meta:

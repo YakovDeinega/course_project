@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('profile_manager.urls')),
     path('courses/', include('education.urls')),
     path('api/', include('rest_framework.urls')),
+    path('chat/', include('chat.urls')),
     path('chat/<str:room_name>/', views.room, name='room'),
 ]
 

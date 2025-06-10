@@ -44,3 +44,27 @@ class Message(models.Model):
     class Meta:
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
+
+    def mark_as_received(self):
+        self.is_received = True
+        self.save()
+
+    def mark_as_checked(self):
+        self.is_checked = True
+        self.save()
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'text': self.text,
+            'sender_id': self.sender.id if self.sender else None,
+            'timestamp': self.dt_send.isoformat(),
+            'is_received': self.is_received,
+            'is_checked': self.is_checked
+        }
+
+    def save(self, *args, **kwargs):
+        # При создании нового сообщения автоматически ставим is_received=False
+        if not self.pk and not hasattr(self, 'is_received'):
+            self.is_received = False
+        super().save(*args, **kwargs)

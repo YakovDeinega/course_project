@@ -1,42 +1,44 @@
-<header>
-        <div class="container-fluid text-center" style="border-bottom: solid;">
-            <div class="row">
-                <div class="col p-0">
-                    <!-- Логотип слева -->
-                    <a href="/">
-                        <img src="" alt="Логотип" width="40" height="40">
-                        МойСайт
-                    </a>
-                </div>
+{% load static %}
+<header class="sticky-top bg-white">
+    <div class="container-fluid py-2 border-bottom">
+        <div class="row align-items-center">
+            <!-- Логотип слева -->
+            <div class="col-md-3 text-start">
+                <a href="/" class="d-flex align-items-center text-decoration-none text-dark">
+                    <img src="{% static 'path/to/logo.png' %}" alt="Логотип" width="40" height="40" class="me-2">
+                    <span class="fw-bold">МойСайт</span>
+                </a>
+            </div>
 
-                <!-- Ссылки по центру -->
-                <div class="col p-0">
-                    <ul class="nav justify-content-center">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'get_list_of_profiles' %}">Профили</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/services/">Курсы</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/blog/">Чат</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/faq/">FAQ</a>
-                        </li>
-                    </ul>
-                </div>
-
-                    <!-- Кнопка справа -->
-                <div class="col p-0">
-                    {% if request.user.is_authenticated %}
-                    <!-- Если пользователь авторизован -->
-                    <a href="" class="btn btn-custom">Профиль</a>
-                    {% else %}
-                    <!-- Если пользователь не авторизован -->
-                    <a href="{% url 'login' %}" class="btn btn-custom">Войти</a>
+            <!-- Ссылки по центру -->
+            <div class="col-md-6">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link px-3 py-2" href="{% url 'list_of_profiles' %}">Профили</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link px-3 py-2" href="{% url 'list_of_courses' %}">Курсы</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item mx-2">
+                        <a class="nav-link px-3 py-2" href="{% url 'chat_list' %}">Чат</a>
+                    </li>
                     {% endif %}
-                </div>
+                </ul>
+            </div>
+
+            <!-- Кнопка справа -->
+            <div class="col-md-3 text-end">
+                {% if user.is_authenticated %}
+                <a href="{% url 'get_concrete_profile' user.id %}" class="btn btn-outline-primary px-4">
+                    Профиль
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary px-4">
+                    Войти
+                </a>
+                {% endif %}
             </div>
         </div>
+    </div>
 </header>
